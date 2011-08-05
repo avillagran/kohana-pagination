@@ -1,3 +1,47 @@
 Simple pagination for Kohana v3.2
 
+mkdir modules/pagination
+cd modules/pagination
+git ....
+
+Add the module in 'application/bootstrap.php':
+Kohana::modules(array(
+	 ...
+    	 'pagination'        => MODPATH.'pagination',        // Pagination
+	));
+
+
+Usage example:
+// 'appliaction/controllers/list.php
+    public function action_object()
+    {
+        $page_nr = $this->request->param('page_nr');
+        $total_items = ORM::factory('object')->count_all();
+
+        $pagination = new Pagination(array(
+            'page_nr' => $page_nr,
+            'items_per_page' => 10
+            'total_items' => $total_items,
+            'base_url' => 'list/object',
+            'uri_segment' => 'page',
+        ));
+        $items = $pagination->query('object');
+        
+        $this->template->pagination = $pagination->get_view();
+        $this->template->list = View::factory('list/list')
+                ->bind('items', $items);
+    }
+
+
+// 'application/views/list/list.php
+<?php
+
+    $objects_html = '';
+    foreach($items as $item) {
+        $objects_html .= vsprintf("<li>%s : %s</li>\n", 
+                array($item->obinv, $item->obobject));
+    }
+    
+    echo $objects_html;
+?>
 
