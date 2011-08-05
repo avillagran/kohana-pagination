@@ -12,7 +12,7 @@ Kohana::modules(array(
 
 
 Usage example:
-// 'appliaction/controllers/list.php
+// 'appliaction/classes/controller/list.php
     public function action_object()
     {
         $page_nr = $this->request->param('page_nr');
