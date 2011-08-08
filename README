@@ -1,13 +1,12 @@
 Simple pagination for Kohana v3.2
 
-mkdir modules/pagination
-cd modules/pagination
-git ....
+cd your_project/modules
+git clone ...
 
 Add the module in 'application/bootstrap.php':
 Kohana::modules(array(
 	 ...
-    	 'pagination'        => MODPATH.'pagination',        // Pagination
+    	 'pagination'        => MODPATH.'kohana-pagination',  // Pagination
 	));
 
 
