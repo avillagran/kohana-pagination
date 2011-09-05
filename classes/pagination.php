@@ -42,6 +42,12 @@ class Pagination {
      * @var string 
      */
     private $style;
+	
+	/**
+	 * Sort order
+	 * @var string
+	 */
+	private $order_by ;
     
     /**
      * Creates a pagination object
@@ -55,6 +61,7 @@ class Pagination {
         $this->base_url = Arr::get($config, 'base_url');
         $this->uri_segment = Arr::get($config, 'uri_segment');
         $this->style = Arr::get($config, 'style', 'pagination/default');
+		$this->order_by = Arr::get($config, 'order_by', NULL);
     }
     
     /**
@@ -64,10 +71,17 @@ class Pagination {
      */
     public function query($orm_model_name)
     {
-        return ORM::factory($orm_model_name)
-                ->limit($this->items_per_page)
-                ->offset($this->items_per_page * max(($this->page_nr-1), 0))
-                ->find_all(); 
+    	$query = ORM::factory($orm_model_name)
+                	->limit($this->items_per_page)
+                	->offset($this->items_per_page * max(($this->page_nr-1), 0));
+					
+        if($this->order_by != NULL)
+		{
+			$tmp = explode(" ", $this->order_by);
+			
+			$query->order_by($tmp[0], $tmp[1]);
+		}       
+		return $query->find_all(); 
     }
     
     /**
