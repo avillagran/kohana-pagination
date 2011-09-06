@@ -47,7 +47,12 @@ class Pagination {
 	 * Sort order
 	 * @var string
 	 */
-	private $order_by ;
+	private $order_by;
+	/**
+	 * Where conditions
+	 * @var array
+	 */
+	private $where_array;
     
     /**
      * Creates a pagination object
@@ -62,6 +67,7 @@ class Pagination {
         $this->uri_segment = Arr::get($config, 'uri_segment');
         $this->style = Arr::get($config, 'style', 'pagination/default');
 		$this->order_by = Arr::get($config, 'order_by', NULL);
+		$this->where_array = Arr::get($config, 'where_array', NULL);
     }
     
     /**
@@ -71,17 +77,34 @@ class Pagination {
      */
     public function query($orm_model_name)
     {
-    	$query = ORM::factory($orm_model_name)
-                	->limit($this->items_per_page)
-                	->offset($this->items_per_page * max(($this->page_nr-1), 0));
-					
+
+    	$counter = Db::select(DB::expr('COUNT(*) AS mycount'))->from($orm_model_name);
+		$query = Db::select()->from($orm_model_name);
+			
         if($this->order_by != NULL)
 		{
 			$tmp = explode(" ", $this->order_by);
 			
 			$query->order_by($tmp[0], $tmp[1]);
-		}       
-		return $query->find_all(); 
+			$counter->order_by($tmp[0], $tmp[1]);
+		}      
+		if($this->where_array != NULL)
+		{
+			foreach($this->where_array as $tmp)
+			{
+				$query->where($tmp[0], $tmp[1], $tmp[2]);
+				$counter->where($tmp[0], $tmp[1], $tmp[2]);
+			}
+		} 
+		
+		$query->limit($this->items_per_page)
+              ->offset($this->items_per_page * max(($this->page_nr-1), 0));
+		
+		$items = $query->execute()->as_array();
+		
+		$this->total_items = $counter->execute()->get('mycount');
+		
+		return $items;
     }
     
     /**

@@ -7,12 +7,13 @@
     {
         if($active)
         {
-            return '<a href="' . URL::site($base_url.'/'.$uri_segment.'/'
-                    .$page.'">'.$description.'</a>') . "\n";
+        	$url = URL::site($base_url.'/'.$uri_segment.'/'.$page);
+			$url .= URL::query();
+            return '<span class="page"><a href="' . $url . '" rel="next">'.$description.'</a></span>' . "\n";
         }
         else
         {
-            return $description . "\n";
+            return '<span class="page current">'.$description.'</span>' . "\n";
         }
     }
     
@@ -51,7 +52,7 @@
         
     $pagination .= url($next, '>', $page_nr != $last);
     $pagination .= url($last, 'Last', $page_nr != $last);
-    
+    if($num_pages > 1)
     echo $pagination;
     
 ?>
