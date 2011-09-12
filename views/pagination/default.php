@@ -34,9 +34,10 @@
     
     $from = max($page_nr - $diff, 1);      
     $to = min($page_nr + $diff, $num_pages);
+    /*
     if($page_nr <= $diff) $to += $diff - $page_nr + 1;
     if($page_nr > $num_pages - $diff) $from -= $diff - $num_pages + $page_nr ;
-
+	*/
     foreach(range($from, $to) as $page)
     {
         if($page == $page_nr || ($page == 1 && $page_nr == 0))
